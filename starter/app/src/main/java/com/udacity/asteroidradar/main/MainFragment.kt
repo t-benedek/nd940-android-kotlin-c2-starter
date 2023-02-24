@@ -26,7 +26,6 @@ class MainFragment : Fragment() {
 //         val dataSource = SleepDatabase.getInstance(application).sleepDatabaseDao
 //        val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
 //        val sleepTrackerViewModel = ViewModelProvider(this, viewModelFactory).get(SleepTrackerViewModel::class.java)
-        val manager = GridLayoutManager(activity, 3)
         val adapter = AsteroidsAdapter(AsteroidsAdapter.AsteroidListener { nightId ->
             // sleepTrackerViewModel.onSleepNightClicked(nightId)
             println("DAS HAT GEKLAPPT ${id}")
@@ -37,9 +36,8 @@ class MainFragment : Fragment() {
                 adapter.submitList(it)
             }
         })
-//
+
         binding.asteroidRecycler.adapter = adapter
-        binding.asteroidRecycler.layoutManager = manager
 
         setHasOptionsMenu(true)
 
