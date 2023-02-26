@@ -5,6 +5,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
@@ -23,9 +24,20 @@ class MainFragment : Fragment() {
         binding.viewModel = viewModel
 
         val application = requireNotNull(this.activity).application
-        val adapter = AsteroidsAdapter(AsteroidsAdapter.AsteroidListener { nightId ->
-            // sleepTrackerViewModel.onSleepNightClicked(nightId)
+        val adapter = AsteroidsAdapter(AsteroidsAdapter.AsteroidListener { asteroidID ->
+            viewModel.onAsteroidClicked(asteroidID)
         })
+
+        //show detail fragment onclick on an asteroid
+        viewModel.navigateToAsteroidDetail.observe(viewLifecycleOwner) { asteroid ->
+            asteroid?.let {
+
+                findNavController().navigate(MainFragmentDirections.actionShowDetail(asteroid))
+
+                //tell the fragment that navigation was done
+                this.viewModel.onAsteroidDetailNavigated()
+            }
+        }
 
         viewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it?.let {

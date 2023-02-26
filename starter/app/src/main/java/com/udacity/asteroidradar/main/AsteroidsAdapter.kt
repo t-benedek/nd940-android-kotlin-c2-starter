@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.databinding.ItemAsteroidBinding
+import com.udacity.asteroidradar.databinding.ItemAsteroidBindingImpl
 
 class AsteroidsAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid, AsteroidsAdapter.ViewHolder>(AsteroidDiffCallback()) {
 
@@ -12,7 +13,7 @@ class AsteroidsAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroi
 
         fun bind(item: Asteroid, clickListener: AsteroidListener) {
             binding.asteroid = item
-            // binding. = clickListener
+            binding.clickListener = clickListener
 
             // make it even faster
             binding.executePendingBindings()
