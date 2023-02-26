@@ -52,12 +52,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                     API_KEY)
                 val jsonObject = JSONObject(response)
                 val list = parseAsteroidsJsonResult(jsonObject)
-                Log.i("ViewModel", "Liste " + list.toString())
 
                 _asteroidList.value = list
                 val size = _asteroidList?.value?.size
-                Log.i("ViewModel", "First List Item " + size)
-
             } catch(exc:Exception){
                 Log.e("MainViewModel",exc.message,exc)
             }
@@ -67,7 +64,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     fun onAsteroidClicked(asteroidId:Long) {
         viewModelScope.launch {
-            _navigateToAsteroidDetail.value = _asteroidList?.value?.get(1)
+            var asteroid = _asteroidList?.value?.get(0)
+            for (a in _asteroidList.value!!) {
+                if (a.id == asteroidId) asteroid = a
+            }
+            _navigateToAsteroidDetail.value = asteroid
         }
     }
 
