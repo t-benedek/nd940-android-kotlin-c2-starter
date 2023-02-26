@@ -8,34 +8,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.NasaImageApi
-import com.udacity.asteroidradar.api.NasaImageApiService
+import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import kotlinx.coroutines.launch
+import okhttp3.Response
 import org.json.JSONObject
-import timber.log.Timber
 
 private const val API_KEY = "0SFEMaVSIupLNBuIH8qDZ5hhNKAkJflFeCro1Mmr"
 
 class MainViewModel(application: Application) : AndroidViewModel(application){
-    private val asteroidList = listOf<Asteroid>(
-        Asteroid(1, "BLING", "11",12.0,
-            12.0, 12.0, 12.0, true),
-        Asteroid(2, "BONG", "21",12.0,
-        12.0, 12.0, 12.0, false),
-        Asteroid(3, "BONG", "230",12.0,
-        12.0, 12.0, 12.0, true),
-        Asteroid(4, "BONG", "540",12.0,
-            12.0, 12.0, 12.0, false),
-        Asteroid(5, "BONG", "54",12.0,
-            12.0, 12.0, 12.0, true),
-        Asteroid(6, "BONG", "56",12.0,
-            12.0, 12.0, 12.0, false),
-        Asteroid(7, "BONG", "67",12.0,
-            12.0, 12.0, 12.0, true),
-        Asteroid(8, "BONG", "78",12.0,
-            12.0, 12.0, 12.0, false),
-        Asteroid(9, "BONG", "999",12.0,
-            12.0, 12.0, 12.0, true)
-    )
+    private var _asteroidList = MutableLiveData<List<Asteroid>>()
+    val asteroids:LiveData<List<Asteroid>>
+        get() = _asteroidList
 
     enum class AsteroidStatus{LOADING,ERROR, DONE }
 
@@ -58,13 +41,23 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         get()=_status
 
     init {
-//        viewModelScope.launch {
-//            asteroidRepository.refreshAsteroid()
-//        }
+
         _navigateToAsteroidDetail.value = null
         viewModelScope.launch {
             try{
                 _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(API_KEY).url
+                val response = NasaImageApi.retrofitService.getAsteroids (
+                    "2023-01-08",
+                    "2023-01-09",
+                    API_KEY)
+                val jsonObject = JSONObject(response)
+                val list = parseAsteroidsJsonResult(jsonObject)
+                Log.i("ViewModel", "Liste " + list.toString())
+
+                _asteroidList.value = list
+                val size = _asteroidList?.value?.size
+                Log.i("ViewModel", "First List Item " + size)
+
             } catch(exc:Exception){
                 Log.e("MainViewModel",exc.message,exc)
             }
@@ -72,17 +65,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         Log.i("MainViewModel", "LOG CALLING getDayImageURL\"")
     }
 
-    val asteroids = MutableLiveData<List<Asteroid>>(asteroidList)
-
     fun onAsteroidClicked(asteroidId:Long) {
         viewModelScope.launch {
-            _navigateToAsteroidDetail.value = asteroidList.get(1)
+            _navigateToAsteroidDetail.value = _asteroidList?.value?.get(1)
         }
     }
 
     fun onAsteroidDetailNavigated(){
         _navigateToAsteroidDetail.value = null
     }
-
-
 }
