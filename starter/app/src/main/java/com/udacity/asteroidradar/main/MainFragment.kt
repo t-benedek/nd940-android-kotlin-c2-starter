@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import timber.log.Timber
 
 class MainFragment : Fragment() {
 
@@ -19,16 +20,11 @@ class MainFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
-
         binding.viewModel = viewModel
 
         val application = requireNotNull(this.activity).application
-//         val dataSource = SleepDatabase.getInstance(application).sleepDatabaseDao
-//        val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
-//        val sleepTrackerViewModel = ViewModelProvider(this, viewModelFactory).get(SleepTrackerViewModel::class.java)
         val adapter = AsteroidsAdapter(AsteroidsAdapter.AsteroidListener { nightId ->
             // sleepTrackerViewModel.onSleepNightClicked(nightId)
-            println("DAS HAT GEKLAPPT ${id}")
         })
 
         viewModel.asteroids.observe(viewLifecycleOwner, Observer {
@@ -38,9 +34,7 @@ class MainFragment : Fragment() {
         })
 
         binding.asteroidRecycler.adapter = adapter
-
         setHasOptionsMenu(true)
-
         return binding.root
     }
 
