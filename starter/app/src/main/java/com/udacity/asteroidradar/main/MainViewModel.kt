@@ -48,7 +48,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                 _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(API_KEY).url
                 val response = NasaImageApi.retrofitService.getAsteroids (
                     "2023-01-08",
-                    "2023-01-09",
+                    "2023-01-11",
                     API_KEY)
                 val jsonObject = JSONObject(response)
                 val list = parseAsteroidsJsonResult(jsonObject)
