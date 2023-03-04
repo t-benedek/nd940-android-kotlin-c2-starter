@@ -9,13 +9,17 @@ import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.NasaImageApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
+import com.udacity.asteroidradar.database.DatabaseHelper
+import com.udacity.asteroidradar.database.getDatabase
 import kotlinx.coroutines.launch
-import okhttp3.Response
 import org.json.JSONObject
 
 private const val API_KEY = "0SFEMaVSIupLNBuIH8qDZ5hhNKAkJflFeCro1Mmr"
 
 class MainViewModel(application: Application) : AndroidViewModel(application){
+
+    private val asteroidsDao = getDatabase(application).asteroidsDao
+
     private var _asteroidList = MutableLiveData<List<Asteroid>>()
     val asteroids:LiveData<List<Asteroid>>
         get() = _asteroidList
@@ -53,8 +57,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                 val jsonObject = JSONObject(response)
                 val list = parseAsteroidsJsonResult(jsonObject)
 
+                for (a in list) {
+                    Log.i("MainViewModel", "Adding Asteroid ID" + a.id)
+                    asteroidsDao.insert(DatabaseHelper.toDatabaseAsteroid(a))
+                }
+
                 _asteroidList.value = list
-                val size = _asteroidList?.value?.size
+
             } catch(exc:Exception){
                 Log.e("MainViewModel",exc.message,exc)
             }
