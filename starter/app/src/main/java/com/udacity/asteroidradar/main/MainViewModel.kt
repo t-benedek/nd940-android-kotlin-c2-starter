@@ -1,28 +1,21 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.NasaImageApi
-import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.DatabaseHelper
 import com.udacity.asteroidradar.database.getDatabase
+import com.udacity.asteroidradar.repository.AsteroidRepo
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.time.LocalDate
-
-private const val API_KEY = "0SFEMaVSIupLNBuIH8qDZ5hhNKAkJflFeCro1Mmr"
-private var today = LocalDate.now().toString()
-var endDate = LocalDate.now().plusDays(7).toString()
-
 
 class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val asteroidsDao = getDatabase(application).asteroidsDao
+    private val repo = AsteroidRepo(asteroidsDao)
 
     private var _asteroidList = MutableLiveData<List<Asteroid>>()
     val asteroids:LiveData<List<Asteroid>>
@@ -52,27 +45,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
         _navigateToAsteroidDetail.value = null
         viewModelScope.launch {
-            try{
-                _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(API_KEY).url
-                val response = NasaImageApi.retrofitService.getAsteroids (
-                    endDate,
-                    today,
-                    API_KEY)
-                val jsonObject = JSONObject(response)
-                val list = parseAsteroidsJsonResult(jsonObject)
-
-                for (a in list) {
-                    Log.i("MainViewModel", "Adding Asteroid ID" + a.id)
-                    asteroidsDao.insert(DatabaseHelper.toDatabaseAsteroid(a))
-                }
-
-                _asteroidList.value = DatabaseHelper.toAsteroidFromDatabase(asteroidsDao.getAllAsteroids())
-
-            } catch(exc:Exception){
-                Log.e("MainViewModel",exc.message,exc)
-            }
+            _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(repo.API_KEY).url
+            repo.refreshAsteroid()
+            _asteroidList.value = DatabaseHelper.toAsteroidFromDatabase(asteroidsDao.getAllAsteroids())
         }
-        Log.i("MainViewModel", "LOG CALLING getDayImageURL\"")
     }
 
     fun onAsteroidClicked(asteroidId:Long) {
