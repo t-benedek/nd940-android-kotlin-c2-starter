@@ -8,27 +8,28 @@ import com.udacity.asteroidradar.Asteroid
 @Dao
 interface AsteroidsDao {
 
-    @Query("select * from databaseasteroid ORDER BY closeApproachDate DESC")
-    suspend fun getAllAsteroids(): List<DatabaseAsteroid>
+    @Query("select * from asteroid ORDER BY closeApproachDate DESC")
+    suspend fun getAllAsteroids(): List<Asteroid>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Suppress("RedundantSuspendModifier")
-    suspend fun insert(asteroid: DatabaseAsteroid)
+    suspend fun insert(asteroid: Asteroid)
 
-    @Query("DELETE FROM databaseasteroid WHERE closeApproachDate<:today")
+    @Query("DELETE FROM asteroid WHERE closeApproachDate<:today")
     suspend fun deletePreviousAsteroid(today:String)
 
-    @Query("SELECT * FROM databaseasteroid WHERE id=:id")
+    @Query("SELECT * FROM asteroid WHERE id=:id")
     suspend fun getAsteroid(id:Long): Asteroid?
 
-    @Query("SELECT * FROM databaseasteroid WHERE closeApproachDate BETWEEN :date and :end_date ORDER BY closeApproachDate")
+    @Query("SELECT * FROM asteroid WHERE closeApproachDate BETWEEN :date and :end_date ORDER BY closeApproachDate")
     fun getAsteroidsByDate(date:String, end_date:String):LiveData<List<Asteroid>?>
 
-    @Query("SELECT * FROM databaseasteroid WHERE closeApproachDate = :date")
+    @Query("SELECT * FROM asteroid WHERE closeApproachDate = :date")
     fun getAsteroidOfToday(date:String):LiveData<List<Asteroid>?>
 }
 
-@Database(entities = [DatabaseAsteroid::class], version = 1)
+@Database(entities = [Asteroid::class], version = 1)
+
 abstract class AsteroidsDatabase : RoomDatabase() {
     abstract val asteroidsDao: AsteroidsDao
 }
@@ -36,7 +37,7 @@ abstract class AsteroidsDatabase : RoomDatabase() {
 private lateinit var INSTANCE: AsteroidsDatabase
 
 fun getDatabase(context: Context): AsteroidsDatabase {
-    synchronized(DatabaseAsteroid::class.java) {
+    synchronized(Asteroid::class.java) {
         if (!::INSTANCE.isInitialized) {
             INSTANCE = Room.databaseBuilder (
                 context.applicationContext,

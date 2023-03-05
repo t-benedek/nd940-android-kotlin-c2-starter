@@ -23,7 +23,8 @@ class AsteroidRepo(private val database: AsteroidsDao) {
                 val list = parseAsteroidsJsonResult(jsonObject)
 
                 for (a in list) {
-                    database.insert(DatabaseHelper.toDatabaseAsteroid(a))
+                    // database.insert(DatabaseHelper.toDatabaseAsteroid(a))
+                    database.insert(a)
                 }
             } catch(exc:Exception){
                 Log.e("MainViewModel",exc.message,exc)
