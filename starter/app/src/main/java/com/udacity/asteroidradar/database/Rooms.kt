@@ -1,14 +1,14 @@
 package com.udacity.asteroidradar.database
 
 import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.udacity.asteroidradar.Asteroid
 
 @Dao
 interface AsteroidsDao {
 
-    @Query("select * from databaseasteroid")
+
+    @Query("select * from databaseasteroid ORDER BY closeApproachDate DESC")
     suspend fun getAllAsteroids(): List<DatabaseAsteroid>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

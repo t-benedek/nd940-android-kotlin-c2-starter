@@ -13,8 +13,12 @@ import com.udacity.asteroidradar.database.DatabaseHelper
 import com.udacity.asteroidradar.database.getDatabase
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.time.LocalDate
 
 private const val API_KEY = "0SFEMaVSIupLNBuIH8qDZ5hhNKAkJflFeCro1Mmr"
+private var today = LocalDate.now().toString()
+var endDate = LocalDate.now().plusDays(7).toString()
+
 
 class MainViewModel(application: Application) : AndroidViewModel(application){
 
@@ -51,8 +55,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
             try{
                 _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(API_KEY).url
                 val response = NasaImageApi.retrofitService.getAsteroids (
-                    "2023-01-08",
-                    "2023-01-11",
+                    endDate,
+                    today,
                     API_KEY)
                 val jsonObject = JSONObject(response)
                 val list = parseAsteroidsJsonResult(jsonObject)
