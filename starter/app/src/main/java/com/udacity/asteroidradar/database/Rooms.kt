@@ -9,7 +9,7 @@ import com.udacity.asteroidradar.Asteroid
 interface AsteroidsDao {
 
     @Query("select * from asteroid ORDER BY closeApproachDate DESC")
-    suspend fun getAllAsteroids(): List<Asteroid>
+    fun getAllAsteroids(): LiveData<List<Asteroid>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Suppress("RedundantSuspendModifier")

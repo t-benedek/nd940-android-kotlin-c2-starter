@@ -13,6 +13,8 @@ class AsteroidRepo(private val database: AsteroidsDao) {
     var endDate = LocalDate.now().plusDays(7).toString()
     val API_KEY = "0SFEMaVSIupLNBuIH8qDZ5hhNKAkJflFeCro1Mmr"
 
+    val allAsteroids = database.getAllAsteroids()
+
     suspend fun refreshAsteroid(){
             try{
                 val response = NasaImageApi.retrofitService.getAsteroids (
@@ -30,6 +32,7 @@ class AsteroidRepo(private val database: AsteroidsDao) {
                 Log.e("MainViewModel",exc.message,exc)
             }
     }
+
 
     suspend fun deletePreviousAsteroids(){
         database.deletePreviousAsteroid(today)

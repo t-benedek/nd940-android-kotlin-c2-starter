@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.NasaImageApi
-import com.udacity.asteroidradar.database.DatabaseHelper
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.repository.AsteroidRepo
 import kotlinx.coroutines.launch
@@ -16,10 +15,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val asteroidsDao = getDatabase(application).asteroidsDao
     private val repo = AsteroidRepo(asteroidsDao)
-
-    private var _asteroidList = MutableLiveData<List<Asteroid>>()
-    val asteroids:LiveData<List<Asteroid>>
-        get() = _asteroidList
+    val asteroids = repo.allAsteroids
 
     enum class AsteroidStatus{LOADING,ERROR, DONE }
 
@@ -45,16 +41,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         _navigateToAsteroidDetail.value = null
         viewModelScope.launch {
             _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(repo.API_KEY).url
-            repo.deletePreviousAsteroids()
             repo.refreshAsteroid()
-            _asteroidList.value = asteroidsDao.getAllAsteroids()
+            // asteroids = asteroidsDao.getAllAsteroids()
         }
     }
 
     fun onAsteroidClicked(asteroidId:Long) {
         viewModelScope.launch {
-            var asteroid = _asteroidList?.value?.get(0)
-            for (a in _asteroidList.value!!) {
+            var asteroid = asteroids?.value?.get(0)
+            for (a in asteroids.value!!) {
                 if (a.id == asteroidId) asteroid = a
             }
             _navigateToAsteroidDetail.value = asteroid
