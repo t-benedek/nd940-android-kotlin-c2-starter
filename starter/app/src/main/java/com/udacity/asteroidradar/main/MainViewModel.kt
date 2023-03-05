@@ -62,7 +62,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
                     asteroidsDao.insert(DatabaseHelper.toDatabaseAsteroid(a))
                 }
 
-                _asteroidList.value = list
+                _asteroidList.value = DatabaseHelper.toAsteroidFromDatabase(asteroidsDao.getAllAsteroids())
 
             } catch(exc:Exception){
                 Log.e("MainViewModel",exc.message,exc)

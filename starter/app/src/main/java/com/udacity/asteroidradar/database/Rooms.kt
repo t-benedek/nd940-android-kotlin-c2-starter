@@ -9,10 +9,11 @@ import com.udacity.asteroidradar.Asteroid
 interface AsteroidsDao {
 
     @Query("select * from databaseasteroid")
-    fun getAllAsteroids(): LiveData<List<DatabaseAsteroid>>
+    suspend fun getAllAsteroids(): List<DatabaseAsteroid>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(asteroid: DatabaseAsteroid)
+    @Suppress("RedundantSuspendModifier")
+    suspend fun insert(asteroid: DatabaseAsteroid)
 }
 
 @Database(entities = [DatabaseAsteroid::class], version = 1)
@@ -48,6 +49,25 @@ class DatabaseHelper {
                 distanceFromEarth = a.distanceFromEarth,
                 isPotentiallyHazardous = a.isPotentiallyHazardous
             )
+        }
+
+        fun toAsteroidFromDatabase(inList: List<DatabaseAsteroid>): List<Asteroid> {
+            var retList = ArrayList<Asteroid>()
+            for (a in inList) {
+                retList.add(
+                    Asteroid(
+                        id = a.id,
+                        codename = a.codename,
+                        closeApproachDate = a.closeApproachDate,
+                        absoluteMagnitude = a.absoluteMagnitude,
+                        estimatedDiameter = a.estimatedDiameter,
+                        relativeVelocity = a.relativeVelocity,
+                        distanceFromEarth = a.distanceFromEarth,
+                        isPotentiallyHazardous = a.isPotentiallyHazardous
+                    )
+                )
+            }
+            return retList
         }
     }
 }
