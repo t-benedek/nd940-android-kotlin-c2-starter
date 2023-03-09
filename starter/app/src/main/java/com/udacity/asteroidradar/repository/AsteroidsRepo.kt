@@ -14,6 +14,8 @@ class AsteroidRepo(private val database: AsteroidsDao) {
     val API_KEY = "0SFEMaVSIupLNBuIH8qDZ5hhNKAkJflFeCro1Mmr"
 
     val allAsteroids = database.getAllAsteroids()
+    val asteroidsOfWeek = database.getAsteroidsByDate(today, endDate)
+    val asteroidOfToday = database.getAsteroidOfToday(today)
 
     suspend fun refreshAsteroid(){
             try{

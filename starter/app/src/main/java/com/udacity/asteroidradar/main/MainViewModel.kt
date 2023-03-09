@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.NasaImageApi
@@ -15,27 +16,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val asteroidsDao = getDatabase(application).asteroidsDao
     private val repo = AsteroidRepo(asteroidsDao)
-    val asteroids = repo.allAsteroids
 
-    enum class AsteroidStatus{LOADING,ERROR, DONE }
+
 
     // Navigation to Details status
     private var _navigateToAsteroidDetail=MutableLiveData<Asteroid?>()
     val navigateToAsteroidDetail:LiveData<Asteroid?>
         get() = _navigateToAsteroidDetail
 
-    // private val asteroidRepository = AsteroidRepository(database)
+    enum class OptionMenu { SHOW_ALL, SHOW_TODAY, SHOW_WEEK }
     var optionMenu = MutableLiveData(OptionMenu.SHOW_WEEK)
+
+    var asteroids:LiveData<List<Asteroid>?> = Transformations.switchMap(optionMenu){
+        when(it){
+            OptionMenu.SHOW_ALL -> repo.allAsteroids
+            OptionMenu.SHOW_TODAY->repo.asteroidOfToday
+            else->repo.asteroidsOfWeek
+        }
+    }
 
     // Image of the Day VAriables
     private var _dayImageUrl = MutableLiveData<String>()
     val dayImageUrl:LiveData<String>
         get() = _dayImageUrl
-
-    enum class OptionMenu { SHOW_ALL, SHOW_TODAY, SHOW_WEEK }
-    private val _status = MutableLiveData<AsteroidStatus>()
-    val status: LiveData<AsteroidStatus>
-        get()=_status
 
     init {
         _navigateToAsteroidDetail.value = null

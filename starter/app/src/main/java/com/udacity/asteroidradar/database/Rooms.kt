@@ -8,8 +8,6 @@ import com.udacity.asteroidradar.Asteroid
 @Dao
 interface AsteroidsDao {
 
-    @Query("select * from asteroid ORDER BY closeApproachDate DESC")
-    fun getAllAsteroids(): LiveData<List<Asteroid>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @Suppress("RedundantSuspendModifier")
@@ -26,6 +24,9 @@ interface AsteroidsDao {
 
     @Query("SELECT * FROM asteroid WHERE closeApproachDate = :date")
     fun getAsteroidOfToday(date:String):LiveData<List<Asteroid>?>
+
+    @Query("select * from asteroid ORDER BY closeApproachDate DESC")
+    fun getAllAsteroids(): LiveData<List<Asteroid>?>
 }
 
 @Database(entities = [Asteroid::class], version = 1)

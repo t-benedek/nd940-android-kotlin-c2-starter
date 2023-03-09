@@ -6,10 +6,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
-import timber.log.Timber
 
 class MainFragment : Fragment() {
 
@@ -50,12 +49,33 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_overflow_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.optionMenu.value =
+            when(item.itemId){
+                //shows all saved asteroids
+                R.id.show_all_menu-> {
+                    MainViewModel.OptionMenu.SHOW_ALL
+                }
+                //showed asteroids of today
+                R.id.show_today_menu -> MainViewModel.OptionMenu.SHOW_TODAY
+                //shows asteroid for the week
+                else->MainViewModel.OptionMenu.SHOW_WEEK
+            }
+
+        Snackbar.make(this.requireView(),
+            when(item.itemId){
+                R.id.show_saved_menu->getString(R.string.saved_asteroids)
+                R.id.show_today_menu -> getString(R.string.today_asteroids)
+                else-> getString(R.string.next_week_asteroids) } ,
+            Snackbar.LENGTH_LONG)
+            .show()
         return true
     }
 }
