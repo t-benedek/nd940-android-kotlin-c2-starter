@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
+import com.udacity.asteroidradar.api.ImageDay
 import com.udacity.asteroidradar.api.NasaImageApi
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.repository.AsteroidRepo
@@ -16,8 +17,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val asteroidsDao = getDatabase(application).asteroidsDao
     private val repo = AsteroidRepo(asteroidsDao)
-
-
 
     // Navigation to Details status
     private var _navigateToAsteroidDetail=MutableLiveData<Asteroid?>()
@@ -36,14 +35,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     }
 
     // Image of the Day VAriables
-    private var _dayImageUrl = MutableLiveData<String>()
-    val dayImageUrl:LiveData<String>
-        get() = _dayImageUrl
+    private var _dayImage = MutableLiveData<ImageDay>()
+    val dayImage:LiveData<ImageDay>
+        get() = _dayImage
 
     init {
         _navigateToAsteroidDetail.value = null
         viewModelScope.launch {
-            _dayImageUrl.value=NasaImageApi.retrofitService.getImageDay(repo.API_KEY).url
+            _dayImage.value=NasaImageApi.retrofitService.getImageDay(repo.API_KEY)
             repo.refreshAsteroid()
             // asteroids = asteroidsDao.getAllAsteroids()
         }

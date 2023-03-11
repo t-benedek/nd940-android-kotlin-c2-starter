@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
+import com.udacity.asteroidradar.api.ImageDay
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -19,11 +20,11 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
 }
 
 @BindingAdapter("dayImage")
-fun bindDayImage(imageView: ImageView, imgSrc: String?){
+fun bindDayImage(imageView: ImageView, img: ImageDay?){
     Picasso.with(imageView.context)
-        .load(imgSrc)
+        .load(img?.url)
         .into(imageView)
-    imageView.contentDescription = "This is the Image of the Day"
+    imageView.contentDescription = "This is the Nasa image of the day" + img?.title
 }
 
 @BindingAdapter("asteroidStatusImage")
