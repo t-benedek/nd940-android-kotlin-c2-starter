@@ -42,9 +42,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
     init {
         _navigateToAsteroidDetail.value = null
         viewModelScope.launch {
-            _dayImage.value=NasaImageApi.retrofitService.getImageDay(repo.API_KEY)
+            _dayImage.value=NasaImageApi?.retrofitService?.getImageDay(repo.API_KEY)
+            // _dayImage.value = ImageDay("Test", "test", "titleTest")
             repo.refreshAsteroid()
-            // asteroids = asteroidsDao.getAllAsteroids()
         }
     }
 

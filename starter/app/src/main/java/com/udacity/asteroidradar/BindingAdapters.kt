@@ -24,7 +24,7 @@ fun bindDayImage(imageView: ImageView, img: ImageDay?){
     Picasso.with(imageView.context)
         .load(img?.url)
         .into(imageView)
-    imageView.contentDescription = "This is the Nasa image of the day" + img?.title
+    imageView?.contentDescription = "This is the Nasa image of the day" + img?.title
 }
 
 @BindingAdapter("asteroidStatusImage")
