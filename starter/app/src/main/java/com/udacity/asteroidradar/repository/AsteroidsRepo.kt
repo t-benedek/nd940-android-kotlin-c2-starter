@@ -27,12 +27,28 @@ class AsteroidRepo(private val database: AsteroidsDao) {
                 val list = parseAsteroidsJsonResult(jsonObject)
 
                 for (a in list) {
-                    // database.insert(DatabaseHelper.toDatabaseAsteroid(a))
                     database.insert(a)
                 }
             } catch(exc:Exception){
                 Log.e("MainViewModel",exc.message,exc)
             }
+    }
+
+    suspend fun refreshTodayAsteroid(){
+        try{
+            val response = NasaImageApi.retrofitService.getAsteroids (
+                today,
+                today,
+                API_KEY)
+            val jsonObject = JSONObject(response)
+            val list = parseAsteroidsJsonResult(jsonObject)
+
+            for (a in list) {
+                database.insert(a)
+            }
+        } catch(exc:Exception){
+            Log.e("MainViewModel",exc.message,exc)
+        }
     }
 
 

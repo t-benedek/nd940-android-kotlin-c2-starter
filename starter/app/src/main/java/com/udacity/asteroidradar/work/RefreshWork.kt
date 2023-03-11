@@ -16,8 +16,8 @@ class RefreshDataWork(appContext: Context, params: WorkerParameters):
         val database = getDatabase(applicationContext)
         val repository = AsteroidRepo(database.asteroidsDao)
         return try {
-            repository.deletePreviousAsteroids()
-            repository.refreshAsteroid()
+            // get only asteroids of today
+            repository.refreshTodayAsteroid()
             Result.success()
         }catch (e:HttpException){
             Result.retry()
