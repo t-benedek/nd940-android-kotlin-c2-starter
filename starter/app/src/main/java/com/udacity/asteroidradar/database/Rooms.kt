@@ -19,10 +19,10 @@ interface AsteroidsDao {
     @Query("SELECT * FROM asteroid WHERE id=:id")
     suspend fun getAsteroid(id:Long): Asteroid?
 
-    @Query("SELECT * FROM asteroid WHERE closeApproachDate BETWEEN :date and :end_date ORDER BY closeApproachDate")
+    @Query("SELECT * FROM asteroid WHERE closeApproachDate BETWEEN :date and :end_date ORDER BY closeApproachDate DESC")
     fun getAsteroidsByDate(date:String, end_date:String):LiveData<List<Asteroid>?>
 
-    @Query("SELECT * FROM asteroid WHERE closeApproachDate = :date")
+    @Query("SELECT * FROM asteroid WHERE closeApproachDate = :date ORDER BY closeApproachDate DESC")
     fun getAsteroidOfToday(date:String):LiveData<List<Asteroid>?>
 
     @Query("select * from asteroid ORDER BY closeApproachDate DESC")

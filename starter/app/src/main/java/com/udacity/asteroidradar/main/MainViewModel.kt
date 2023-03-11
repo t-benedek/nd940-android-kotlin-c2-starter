@@ -28,9 +28,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     var asteroids:LiveData<List<Asteroid>?> = Transformations.switchMap(optionMenu){
         when(it){
-            OptionMenu.SHOW_ALL -> repo.allAsteroids
+            OptionMenu.SHOW_ALL -> repo.asteroidsOfWeek
             OptionMenu.SHOW_TODAY->repo.asteroidOfToday
-            else->repo.asteroidsOfWeek
+            else->repo.allAsteroids
         }
     }
 
