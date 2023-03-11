@@ -29,7 +29,6 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:dayImage="@{viewModel.dayImageUrl}"
-                android:contentDescription="@string/image_of_the_day"
                 app:srcCompat="@drawable/day1"/>
 
             <TextView

@@ -11,8 +11,10 @@ import com.squareup.picasso.Picasso
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
     if (isHazardous) {
         imageView.setImageResource(R.drawable.ic_status_potentially_hazardous)
+        imageView.contentDescription = "Potentially hazardous asteroid"
     } else {
         imageView.setImageResource(R.drawable.ic_status_normal)
+        imageView.contentDescription = "Not hazardous asteroid"
     }
 }
 
@@ -21,14 +23,17 @@ fun bindDayImage(imageView: ImageView, imgSrc: String?){
     Picasso.with(imageView.context)
         .load(imgSrc)
         .into(imageView)
+    imageView.contentDescription = "This is the Image of the Day"
 }
 
 @BindingAdapter("asteroidStatusImage")
 fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
     if (isHazardous) {
         imageView.setImageResource(R.drawable.asteroid_hazardous)
+        imageView.contentDescription = "Potentially hazardous asteroid"
     } else {
         imageView.setImageResource(R.drawable.asteroid_safe)
+        imageView.contentDescription = "Not hazardous asteroid"
     }
 }
 
