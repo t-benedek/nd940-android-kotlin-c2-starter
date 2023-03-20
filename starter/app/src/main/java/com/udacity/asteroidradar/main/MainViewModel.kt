@@ -1,11 +1,13 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.viewModelScope
+import android.content.Context
+import android.content.Context.CONNECTIVITY_SERVICE
+import android.net.ConnectivityManager
+import android.os.Build
+import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.api.ImageDay
 import com.udacity.asteroidradar.api.NasaImageApi
@@ -13,10 +15,12 @@ import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.repository.AsteroidRepo
 import kotlinx.coroutines.launch
 
+
 class MainViewModel(application: Application) : AndroidViewModel(application){
 
     private val asteroidsDao = getDatabase(application).asteroidsDao
     private val repo = AsteroidRepo(asteroidsDao)
+    private val application = application
 
     // Navigation to Details status
     private var _navigateToAsteroidDetail=MutableLiveData<Asteroid?>()
@@ -40,12 +44,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
         get() = _dayImage
 
     init {
-        _navigateToAsteroidDetail.value = null
-        viewModelScope.launch {
-            _dayImage.value=NasaImageApi?.retrofitService?.getImageDay(repo.API_KEY)
-            // _dayImage.value = ImageDay("Test", "test", "titleTest")
-            repo.refreshAsteroid()
-        }
+            _navigateToAsteroidDetail.value = null
+            viewModelScope.launch {
+                try {
+                    if (isNetworkAvailable()) {
+                        _dayImage.value = NasaImageApi?.retrofitService?.getImageDay(repo.API_KEY)
+                    }
+                    repo.refreshAsteroid()
+                } catch (e:java.lang.Exception) {
+                    Log.e("MainViewModel", "exception thrown: ${e.localizedMessage}")
+                }
+            }
     }
 
     fun onAsteroidClicked(asteroidId:Long) {
@@ -60,5 +69,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application){
 
     fun onAsteroidDetailNavigated(){
         _navigateToAsteroidDetail.value = null
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connManager = application.baseContext.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities =  connManager.getNetworkCapabilities(connManager.activeNetwork)
+        return networkCapabilities != null
     }
 }
